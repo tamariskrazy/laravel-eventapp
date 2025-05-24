@@ -33,19 +33,23 @@ class AuthController extends Controller
                 return back()->with('error', 'Hesabınız henüz onaylanmadı.');
             }
 
+            // Session verileri
             session([
                 'kullanici_id' => $kullanici->id,
                 'kullanici_isim' => $kullanici->isim,
                 'kullanici_email' => $kullanici->email,
             ]);
 
-            // ✅ Burada ana sayfaya yönlendirme yapıyoruz
+            // Eğer şifresi daha önce değiştirilmemişse şifre değiştir sayfasına yönlendir
+            if (!$kullanici->password_changed) {
+                return redirect()->route('password.change');
+            }
+
             return redirect()->route('anasayfa');
         }
 
         return back()->with('error', 'Geçersiz giriş bilgileri.');
     }
-
 
     public function register(Request $request)
     {
@@ -61,15 +65,35 @@ class AuthController extends Controller
             'soyisim' => $request->soyisim,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_approved' => false
+            'is_approved' => false,
+            'password_changed' => false,
         ]);
 
         return redirect()->route('login.form')->with('success', 'Kayıt başarılı, onay bekleniyor.');
     }
 
+    public function showChangePasswordForm()
+    {
+        return view('password_change');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+
+        $kullanici = KullanıcıYönetimi::find(session('kullanici_id'));
+        $kullanici->password = Hash::make($request->new_password);
+        $kullanici->password_changed = true;
+        $kullanici->save();
+
+        return redirect()->route('anasayfa')->with('success', 'Şifre başarıyla değiştirildi.');
+    }
+
     public function logout()
     {
-        Auth::logout();
+        session()->flush(); // Oturumu temizle
         return redirect()->route('login.form');
     }
 }
