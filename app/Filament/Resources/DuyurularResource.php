@@ -28,7 +28,13 @@ class DuyurularResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('baslik')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('icerik')
+                    ->required(),
+                Forms\Components\DatePicker::make('tarih')
+                    ->required(),
             ]);
     }
 
@@ -36,7 +42,13 @@ class DuyurularResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('baslik')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('tarih')->date(),
+                Tables\Columns\TextColumn::make('icerik')
+                    ->label('İçerik')
+                    ->limit(50) // Çok uzun içerikler için karakter sınırı
+                    ->wrap()
+                    ->toggleable(), // Opsiyonel: gizlenebilir sütun
             ])
             ->filters([
                 //

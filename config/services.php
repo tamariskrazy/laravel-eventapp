@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'eventbrite' => [
+    'key' => env('EVENTBRITE_API_KEY'),
+],
+
+
 ];

@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('etkinlikler', function (Blueprint $table) {
+        Schema::create('duyurular', function (Blueprint $table) {
         $table->id();
-        $table->string('eventbrite_id')->unique();
-        $table->string('etkinlik_adi');
-        $table->text('description')->nullable();
-        $table->dateTime('tarih')->nullable();
-        $table->string('url')->nullable();
-        $table->timestamps();
-        
+        $table->string('baslik');
+        $table->text('icerik');
+        $table->date('tarih');
     });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('etkinlikler');
+        Schema::dropIfExists('duyurular');
     }
 };

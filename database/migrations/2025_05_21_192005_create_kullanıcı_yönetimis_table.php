@@ -6,27 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('kullanıcı_yönetimis', function (Blueprint $table) {
-            $table->id()->primary();
+        Schema::create('kullanici_yonetimis', function (Blueprint $table) {
+            $table->id();
             $table->string('isim');
             $table->string('soyisim');
             $table->string('email')->unique();
             $table->string('password');
             $table->boolean('is_approved')->default(false); // Yönetici onayı
+            $table->boolean('password_changed')->default(false);
+            $table->json('interests')->nullable(); // İlgi alanları
+            $table->rememberToken(); // remember_token alanı
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('kullanıcı_yönetimis');
+        Schema::dropIfExists('kullanici_yonetimis');
     }
 };

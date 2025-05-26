@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\KullanıcıYönetimi;
+use App\Models\KullaniciYonetimi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,57 +14,51 @@ class AuthController extends Controller
         return view('login');
     }
 
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            if (!$user->is_approved) {
+                Auth::logout();
+                return back()->withErrors(['error' => 'Hesabınız henüz onaylanmadı.']);
+            }
+
+            if (!$user->password_changed) {
+                return redirect()->route('password.change.form');
+            }
+
+            $request->session()->regenerate();
+            return redirect()->intended(route('anasayfa'));
+        }
+
+        return back()->withErrors(['error' => 'Geçersiz giriş bilgileri.']);
+    }
+
     public function showRegisterForm()
     {
         return view('register');
     }
 
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        $kullanici = KullanıcıYönetimi::where('email', $request->email)->first();
-
-        if ($kullanici && Hash::check($request->password, $kullanici->password)) {
-            if (!$kullanici->is_approved) {
-                return back()->with('error', 'Hesabınız henüz onaylanmadı.');
-            }
-
-            // Session verileri
-            session([
-                'kullanici_id' => $kullanici->id,
-                'kullanici_isim' => $kullanici->isim,
-                'kullanici_email' => $kullanici->email,
-            ]);
-
-            // Eğer şifresi daha önce değiştirilmemişse şifre değiştir sayfasına yönlendir
-            if (!$kullanici->password_changed) {
-                return redirect()->route('password.change');
-            }
-
-            return redirect()->route('anasayfa');
-        }
-
-        return back()->with('error', 'Geçersiz giriş bilgileri.');
-    }
-
     public function register(Request $request)
     {
-        $request->validate([
-            'isim' => 'required',
-            'soyisim' => 'required',
-            'email' => 'required|email|unique:kullanıcı_yönetimis,email',
-            'password' => 'required|min:6'
+        $data = $request->validate([
+            'isim' => 'required|string|max:255',
+            'soyisim' => 'required|string|max:255',
+            'email' => 'required|email|unique:kullanici_yonetimis,email',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $user = KullanıcıYönetimi::create([
-            'isim' => $request->isim,
-            'soyisim' => $request->soyisim,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        $user = KullaniciYonetimi::create([
+            'isim' => $data['isim'],
+            'soyisim' => $data['soyisim'],
+            'email' => $data['email'],
+            'password' => $data['password'], // setPasswordAttribute çalışacak
             'is_approved' => false,
             'password_changed' => false,
         ]);
@@ -79,21 +73,25 @@ class AuthController extends Controller
 
     public function changePassword(Request $request)
     {
-        $request->validate([
-            'new_password' => 'required|min:6|confirmed',
+        $data = $request->validate([
+            'new_password' => 'required|string|min:6|confirmed',
         ]);
 
-        $kullanici = KullanıcıYönetimi::find(session('kullanici_id'));
-        $kullanici->password = Hash::make($request->new_password);
-        $kullanici->password_changed = true;
-        $kullanici->save();
+        $user = Auth::user();
+        $user->password = $data['new_password']; // setPasswordAttribute çalışacak
+        $user->password_changed = true;
+        $user->save();
 
         return redirect()->route('anasayfa')->with('success', 'Şifre başarıyla değiştirildi.');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        session()->flush(); // Oturumu temizle
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('login.form');
     }
 }

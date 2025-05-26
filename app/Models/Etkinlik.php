@@ -10,9 +10,11 @@ class Etkinlik extends Model
 
     protected $fillable = [
         'eventbrite_id',
+        'ticketmaster_id',
         'etkinlik_adi',
         'description',
         'tarih',
         'url',
+        
     ];
 }

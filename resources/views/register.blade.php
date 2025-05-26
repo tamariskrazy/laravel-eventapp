@@ -17,6 +17,6 @@
         <input type="password" name="password" required><br>
         <button type="submit">Kayıt Ol</button>
     </form>
-    <p><a href="{{ route('login.post') }}">Giriş Yap</a></p>
+    <p><a href="{{ route('login.form') }}">Giriş Yap</a></p>
 </body>
 </html>
