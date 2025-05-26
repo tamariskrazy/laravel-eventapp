@@ -9,7 +9,7 @@ class EtkinlikYönetimiController extends Controller
 {
     public function index()
     {
-        $etkinlikler = EtkinlikYönetimi::where('tarih', '>=', now())->get();
+        $etkinlikler = EtkinlikYönetimi::where('tarih', '>', now())->get();
 
         return view('anasayfa', compact('etkinlikler'));
     }

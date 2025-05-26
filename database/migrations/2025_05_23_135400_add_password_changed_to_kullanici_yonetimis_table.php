@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('kullanıcı_yönetimis', function (Blueprint $table) {
+        Schema::table('kullanici_yonetimis', function (Blueprint $table) {
         $table->boolean('password_changed')->default(false);
     });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('kullanıcı_yönetimis', function (Blueprint $table) {
+        Schema::table('kullanici_yonetimis', function (Blueprint $table) {
         $table->dropColumn('is_password_changed');
     });
     }

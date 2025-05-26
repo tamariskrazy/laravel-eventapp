@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\KullanıcıYönetimiResource\Pages;
-use App\Models\KullanıcıYönetimi;
+use App\Filament\Resources\KullaniciYonetimiResource\Pages;
+use App\Models\KullaniciYonetimi;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -11,9 +11,9 @@ use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
 
-class KullanıcıYönetimiResource extends Resource
+class KullaniciYonetimiResource extends Resource
 {
-    protected static ?string $model = KullanıcıYönetimi::class;
+    protected static ?string $model = KullaniciYonetimi::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Kullanıcı';
@@ -25,7 +25,7 @@ class KullanıcıYönetimiResource extends Resource
     {
         return $form
             ->schema([
-                // Form alanları burada olacaksa ekleyebilirsin
+                
             ]);
     }
 
@@ -71,9 +71,9 @@ class KullanıcıYönetimiResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKullanıcıYönetimis::route('/'),
-            'create' => Pages\CreateKullanıcıYönetimi::route('/create'),
-            'edit' => Pages\EditKullanıcıYönetimi::route('/{record}/edit'),
+            'index' => Pages\ListKullaniciYonetimis::route('/'),
+            'create' => Pages\CreateKullaniciYonetimi::route('/create'),
+            'edit' => Pages\EditKullaniciYonetimi::route('/{record}/edit'),
         ];
     }
 }
