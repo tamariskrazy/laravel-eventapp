@@ -6,25 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('etkinlikler', function (Blueprint $table) {
-            $table->id();
-            $table->string('isim')->nullable();
-            $table->text('aciklama')->nullable();
-            $table->datetime('tarih')->nullable();
             $table->integer('fiyat')->nullable();
-            $table->string('url')->nullable();
-            
-            $table->string('ticketmaster_id')->nullable()->unique();
-            $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('etkinlikler', function (Blueprint $table) {
-            $table->string('ticketmaster_id')->nullable(false)->change();
+             $table->dropColumn('fiyat');
         });
     }
 };

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('etkinlikler', function (Blueprint $table) {
         $table->id();
-        $table->string('eventbrite_id')->unique();
+        $table->string('ticketmaster_id')->unique();
         $table->string('etkinlik_adi');
         $table->text('description')->nullable();
         $table->dateTime('tarih')->nullable();

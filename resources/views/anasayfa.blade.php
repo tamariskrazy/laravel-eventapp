@@ -112,28 +112,30 @@
         </div>
 
         {{-- 👤 Kullanıcıya Özel Öneriler --}}
-        @auth
-            @if ($onerilenEtkinlikler->isNotEmpty())
-                <div class="mb-5">
-                    <h3 class="mb-3">👤 Sizin İçin Önerilen Etkinlikler</h3>
-                    <div class="row">
-                        @foreach ($onerilenEtkinlikler as $etkinlik)
-                            <div class="col-md-4 mb-4">
-                                <div class="card h-100 border-primary">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">{{ $etkinlik->etkinlik_adi }}</h5>
-                                        <p class="card-text">{{ \Illuminate\Support\Str::limit($etkinlik->description, 100) }}</p>
-                                        <p class="card-text"><strong>Kategori:</strong> {{ $etkinlik->kategori }}</p>
-                                        <p class="card-text"><strong>Tarih:</strong> {{ $etkinlik->tarih }}</p>
-                                        <a href="{{ $etkinlik->url }}" target="_blank" class="btn btn-outline-primary btn-sm mt-auto">Detaylar</a>
-                                    </div>
-                                </div>
+@auth
+    @if (!empty($onerilenEtkinlikler))
+        <div class="mb-5">
+            <h3 class="mb-3">👤 İlgi Alanınıza Uygun Önerilen Etkinlikler</h3>
+            <div class="row">
+                @foreach ($onerilenEtkinlikler as $etkinlik)
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ $etkinlik->etkinlik_adi }}</h5>
+                                <p class="card-text">{{ \Illuminate\Support\Str::limit($etkinlik->description, 100) }}</p>
+                                <a href="{{ $etkinlik->url }}" target="_blank" class="btn btn-primary btn-sm mb-2">Detay</a>
+                                <form action="{{ route('sepet.ekle', $etkinlik->id) }}" method="POST" class="mt-auto">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-sm w-100">Sepete Ekle</button>
+                                </form>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
-                </div>
-            @endif
-        @endauth
+                @endforeach
+            </div>
+        </div>
+    @endif
+@endauth
 
         {{-- 📢 Duyurular --}}
         <div class="mb-5">

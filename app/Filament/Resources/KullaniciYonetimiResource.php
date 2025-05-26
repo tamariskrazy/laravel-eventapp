@@ -6,10 +6,13 @@ use App\Filament\Resources\KullaniciYonetimiResource\Pages;
 use App\Models\KullaniciYonetimi;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
+
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 class KullaniciYonetimiResource extends Resource
 {
@@ -19,13 +22,11 @@ class KullaniciYonetimiResource extends Resource
     protected static ?string $navigationLabel = 'Kullanıcı';
     protected static ?int $navigationSort = 1;
 
-   
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                
+                // Buraya form alanlarını ekleyebilirsin
             ]);
     }
 
@@ -33,12 +34,12 @@ class KullaniciYonetimiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
-                Tables\Columns\TextColumn::make('isim')->label('İsim')->searchable(),
-                Tables\Columns\TextColumn::make('soyisim')->label('Soyisim')->searchable(),
-                Tables\Columns\TextColumn::make('email')->label('E-posta')->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->label('Kayıt Tarihi')->dateTime('d.m.Y H:i')->sortable(),
-                Tables\Columns\TextColumn::make('is_approved')
+                TextColumn::make('id')->label('ID')->sortable(),
+                TextColumn::make('isim')->label('İsim')->searchable(),
+                TextColumn::make('soyisim')->label('Soyisim')->searchable(),
+                TextColumn::make('email')->label('E-posta')->searchable(),
+                TextColumn::make('created_at')->label('Kayıt Tarihi')->dateTime('d.m.Y H:i')->sortable(),
+                TextColumn::make('is_approved')
                     ->label('Durum')
                     ->formatStateUsing(fn ($state) => $state ? 'Onaylı' : 'Onaysız')
                     ->badge()
@@ -49,16 +50,14 @@ class KullaniciYonetimiResource extends Resource
                 Action::make('onayla')
                     ->label('Onayla')
                     ->visible(fn ($record) => !$record->is_approved)
-                    ->action(function ($record) {
-                        $record->update(['is_approved' => true]);
-                    })
+                    ->action(fn ($record) => $record->update(['is_approved' => true]))
                     ->requiresConfirmation()
                     ->color('success')
                     ->icon('heroicon-o-check'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
